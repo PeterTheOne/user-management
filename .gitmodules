@@ -1,0 +1,6 @@
+[submodule "api/Slim"]
+	path = api/Slim
+	url = git@github.com:codeguy/Slim.git
+[submodule "bootstrap"]
+	path = bootstrap
+	url = git@github.com:twbs/bootstrap.git
