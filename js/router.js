@@ -2,15 +2,34 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'model/user',
     'model/session',
+    'view/register',
     'view/login'
-], function($, _, Backbone, Session, LoginView) {
+], function($, _, Backbone, User, Session, RegisterView, LoginView) {
     var AppRouter = Backbone.Router.extend({
         routes: {
-            '': 'index'
+            '': 'index',
+            'register(/)': 'register',
+            'login(/)': 'login'
         },
 
         index: function() {
+            this.register();
+
+        },
+
+        register: function() {
+            var $el = $('.content');
+            $el.html('<h1>user-management</h1>');
+
+            var user = new User();
+            var registerView = new RegisterView({model: user});
+            registerView.render();
+            $el.append(registerView.$el);
+        },
+
+        login: function() {
             var $el = $('.content');
             $el.html('<h1>user-management</h1>');
 

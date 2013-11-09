@@ -24,7 +24,14 @@ $app->post('/session(/)', function() use($app) {
         $password = $params['password'];
         $remember = $params['remember'];
 
-        //$userRepository = new UserRepository();
+        $userRepository = new UserRepository();
+        if (!$userRepository->verifyUser($username, $password)) {
+            // todo: log invalid login attempts
+            // todo: create new Exceptions for 403
+            throw new Exception('not authorised.');
+        }
+
+        // check for invalid login attempts
 
         // todo: create real response.
         $result = array(
