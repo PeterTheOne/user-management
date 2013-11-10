@@ -25,42 +25,40 @@ define([
                 var password2 = registerForm.find('#password2').val();
 
                 var errors = [];
-                if (username.length == 0) {
+                if (username.length === 0) {
                     errors.push('username is not set.');
                 } else if (username.length < 3) {
                     errors.push('username is to short, needs to be at least 3 characters long.');
-                } else if (username.length > 18) {
-                    errors.push('username is to long, needs to be under 18 characters long.');
+                } else if (username.length > 30) {
+                    errors.push('username is to long, needs to be under 30 characters long.');
                 }
-
-                // todo: username exclude names that are used for navigation
-
-                if (firstname.length == 0) {
+                if (firstname.length === 0) {
                     errors.push('firstname is not set.');
                 } else if (firstname.length < 3) {
                     errors.push('firstname is to short, needs to be at least 3 characters long.');
-                } else if (firstname.length > 18) {
-                    errors.push('firstname is to long, needs to be under 18 characters long.');
+                } else if (firstname.length > 30) {
+                    errors.push('firstname is to long, needs to be under 30 characters long.');
                 }
-                if (lastname.length == 0) {
+                if (lastname.length === 0) {
                     errors.push('lastname is not set.');
                 } else if (lastname.length < 3) {
                     errors.push('lastname is to short, needs to be at least 3 characters long.');
-                } else if (lastname.length > 18) {
-                    errors.push('lastname is to long, needs to be under 18 characters long.');
+                } else if (lastname.length > 30) {
+                    errors.push('lastname is to long, needs to be under 30 characters long.');
                 }
                 if (email.length == 0) {
                     errors.push('email is not set.');
                 }
 
+                // todo: username exclude names that are used for navigation
                 // todo: regex type mail
 
-                if (password1.length == 0) {
+                if (password1.length === 0) {
                     errors.push('password1 is not set.');
                 } else if (password1.length < 8) {
                     errors.push('password1 is to short, needs to be at least 8 characters long.');
                 }
-                if (password2.length == 0) {
+                if (password2.length === 0) {
                     errors.push('password2 is not set.');
                 } else if (password1 !== password2) {
                     errors.push('password1 and password2 are not the same.');

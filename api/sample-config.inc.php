@@ -1,6 +1,10 @@
 <?php
 
-define('DB_HOST', '');
-define('DB_NAME', '');
-define('DB_USER', '');
-define('DB_PASS', '');
+$config = new stdClass();
+
+$config->databaseHost = '';
+$config->databaseName = '';
+$config->databaseUser = '';
+$config->databasePassword = '';
+
+$config->passwordSaltStatic = '';
