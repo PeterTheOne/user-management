@@ -7,9 +7,9 @@ class EmailConfirmRepository {
     private $tableName = 'emailConfirm';
 
     /**
-     * @param $pdo
+     * @param PDO $pdo
      */
-    public function __construct($pdo) {
+    public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
 
         $this->createTable();
@@ -49,7 +49,7 @@ class EmailConfirmRepository {
         $statement = $this->pdo->prepare('
             INSERT INTO ' . $this->tableName . '
             (userId, email, confirmToken)
-            VALUES (:userId, :email, :confirmToken)
+            VALUES (:userId, :email, :confirmToken);
         ');
         $statement->bindParam(':userId', $userId);
         $statement->bindParam(':email', $email);

@@ -7,9 +7,9 @@ class UserRepository {
     private $tableName = 'user';
 
     /**
-     * @param $pdo
+     * @param PDO $pdo
      */
-    public function __construct($pdo) {
+    public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
 
         $this->createTable();
@@ -72,13 +72,13 @@ class UserRepository {
      * @param $email
      * @param $salt
      * @param $passwordHash
-     * @return array
+     * @return stdClass
      */
     public function addUser($username, $firstname, $lastname, $email, $salt, $passwordHash) {
         $statement = $this->pdo->prepare('
             INSERT INTO ' . $this->tableName . '
             (username, firstname, lastname, email, salt, passwordHash)
-            VALUES (:username, :firstname, :lastname, :email, :salt, :passwordHash)
+            VALUES (:username, :firstname, :lastname, :email, :salt, :passwordHash);
         ');
         $statement->bindParam(':username', $username);
         $statement->bindParam(':firstname', $firstname);
@@ -88,12 +88,24 @@ class UserRepository {
         $statement->bindParam(':passwordHash', $passwordHash);
         $statement->execute();
 
-        return array(
-            'id' => $this->pdo->lastInsertId(),
-            'username' => $username,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'email' => $email
-        );
+        $user = new stdClass();
+        $user->id = $this->pdo->lastInsertId();
+        $user->username = $username;
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+        $user->email = $email;
+        return $user;
+    }
+
+    public function getUser($username) {
+        $statement = $this->pdo->prepare('
+            SELECT username, firstname, lastname, email, salt, passwordHash
+            FROM ' . $this->tableName . '
+            WHERE username = :username
+            LIMIT 1;
+        ');
+        $statement->bindParam(':username', $username);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_OBJ);
     }
 } 

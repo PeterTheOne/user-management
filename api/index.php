@@ -72,15 +72,19 @@ $app->post('/user(/)', function() use($app, $config, $pdo) {
             $randomSalt, $hashedPassword);
 
         $confirmToken = $passwordHasher->createSalt();
-        $emailConfirmRepository->addEmailConfirm($user['id'], $email, $confirmToken);
+        $emailConfirmRepository->addEmailConfirm($user->id, $email, $confirmToken);
 
         $pdo->commit();
 
         // todo: send mail for email confirm.
 
-        $app->response()->body(json_encode($user, JSON_PRETTY_PRINT));
+        // todo: create user session and return accessToken.
+
+
     } catch (Exception $exception) {
-        $pdo->rollBack();
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         $result = array(
             'exception' => $exception->getMessage()
         );
@@ -91,7 +95,7 @@ $app->post('/user(/)', function() use($app, $config, $pdo) {
     }
 });
 
-$app->post('/session(/)', function() use($app, $pdo) {
+$app->post('/session(/)', function() use($app, $config, $pdo) {
     try {
         $params = (array) json_decode($app->request()->getBody());
         if (!isset($params['username']) ||
@@ -105,24 +109,33 @@ $app->post('/session(/)', function() use($app, $pdo) {
 
         $userRepository = new UserRepository($pdo);
 
-        if (!$userRepository->verifyUser($username, $password)) {
+        // todo check for invalid login attempts.
+
+        $user = $userRepository->getUser($username);
+
+        $passwordHasher = new PasswordHasher();
+        $salt = $config->passwordSaltStatic . $user->salt;
+        if (!$passwordHasher->validatePassword($user->passwordHash, $password, $salt)) {
             // todo: log invalid login attempts
             // todo: create new Exceptions for 403
             throw new Exception('not authorised.');
         }
 
-        // check for invalid login attempts
-
         // todo: create real response.
-        $result = array(
+
+
+        /*$result = array(
             'username' => $username,
             'password' => '',
             'remember' => $remember,
             'accessToken' => '9823nr89dsfoij3f'
         );
 
-        $app->response()->body(json_encode($result, JSON_PRETTY_PRINT));
+        $app->response()->body(json_encode($result, JSON_PRETTY_PRINT));*/
     } catch (Exception $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         $result = array(
             'exception' => $exception->getMessage()
         );
@@ -132,6 +145,5 @@ $app->post('/session(/)', function() use($app, $pdo) {
         $app->response()->header('X-Status-Reason', $exception->getMessage());
     }
 });
-
 
 $app->run();

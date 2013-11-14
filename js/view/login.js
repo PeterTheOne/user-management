@@ -17,8 +17,16 @@ define([
                 event.preventDefault();
 
                 var username = loginForm.find('#username').val();
-                var password = loginForm.find('#password').val();
+                var plainPassword = loginForm.find('#password').val();
                 var remember = loginForm.find('#remember:checked').length > 0;
+
+                // todo: validate, are all fields empty?
+
+
+                // this hash is not secure because of the lack of a salt value,
+                // but at least the password will never be readable in plaintext
+                var passwordBitArray = sjcl.hash.sha256.hash(plainPassword);
+                var password = sjcl.codec.hex.fromBits(passwordBitArray);
 
                 model.save({
                     username: username,
