@@ -114,7 +114,7 @@ $app->post('/session(/)', function() use($app, $config, $pdo) {
         $user = $userRepository->getUser($username);
 
         $passwordHasher = new PasswordHasher();
-        $salt = $config->passwordSaltStatic . $user->salt;
+        $salt = $config->passwordSaltStatic . $user->passwordSalt;
         if (!$passwordHasher->validatePassword($user->passwordHash, $password, $salt)) {
             // todo: log invalid login attempts
             // todo: create new Exceptions for 403

@@ -41,7 +41,7 @@ class UserRepository {
                 lastname VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 emailConfirmed BOOL NOT NULL DEFAULT 0,
-                salt VARCHAR(255) NOT NULL,
+                passwordSalt VARCHAR(255) NOT NULL,
                 passwordHash VARCHAR(255) NOT NULL,
                 admin BOOL NOT NULL DEFAULT 0
             ) ENGINE = InnoDB;
@@ -70,21 +70,21 @@ class UserRepository {
      * @param $firstname
      * @param $lastname
      * @param $email
-     * @param $salt
+     * @param $passwordSalt
      * @param $passwordHash
      * @return stdClass
      */
-    public function addUser($username, $firstname, $lastname, $email, $salt, $passwordHash) {
+    public function addUser($username, $firstname, $lastname, $email, $passwordSalt, $passwordHash) {
         $statement = $this->pdo->prepare('
             INSERT INTO ' . $this->tableName . '
-            (username, firstname, lastname, email, salt, passwordHash)
-            VALUES (:username, :firstname, :lastname, :email, :salt, :passwordHash);
+            (username, firstname, lastname, email, passwordSalt, passwordHash)
+            VALUES (:username, :firstname, :lastname, :email, :passwordSalt, :passwordHash);
         ');
         $statement->bindParam(':username', $username);
         $statement->bindParam(':firstname', $firstname);
         $statement->bindParam(':lastname', $lastname);
         $statement->bindParam(':email', $email);
-        $statement->bindParam(':salt', $salt);
+        $statement->bindParam(':passwordSalt', $passwordSalt);
         $statement->bindParam(':passwordHash', $passwordHash);
         $statement->execute();
 
@@ -99,7 +99,7 @@ class UserRepository {
 
     public function getUser($username) {
         $statement = $this->pdo->prepare('
-            SELECT username, firstname, lastname, email, salt, passwordHash
+            SELECT username, firstname, lastname, email, passwordSalt, passwordHash
             FROM ' . $this->tableName . '
             WHERE username = :username
             LIMIT 1;
