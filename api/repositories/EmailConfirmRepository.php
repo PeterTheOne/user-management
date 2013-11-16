@@ -1,29 +1,13 @@
 <?php
 
-class EmailConfirmRepository {
+include_once 'AbstractRepository.php';
 
-    private $pdo;
-
-    private $tableName = 'emailConfirm';
+class EmailConfirmRepository extends AbstractRepository {
 
     /**
-     * @param PDO $pdo
+     * @var string
      */
-    public function __construct(PDO $pdo) {
-        $this->pdo = $pdo;
-
-        $this->createTable();
-    }
-
-    /**
-     * @return bool
-     */
-    public function tableExists() {
-        $statement = $this->pdo->prepare('SHOW TABLES LIKE :table');
-        $statement->bindParam(':table', $this->tableName);
-        $statement->execute();
-        return $statement->fetch() !== false;
-    }
+    protected $tableName = 'emailConfirm';
 
     /**
      *
@@ -39,7 +23,7 @@ class EmailConfirmRepository {
                 userId INT,
                 FOREIGN KEY (userId) REFERENCES user(id),
                 email VARCHAR(255) NOT NULL,
-                confirmToken VARCHAR(255) NOT NULL
+                confirmToken VARCHAR(255) NOT NULL UNIQUE
             ) ENGINE = InnoDB;
         ');
         $statement->execute();
@@ -55,12 +39,5 @@ class EmailConfirmRepository {
         $statement->bindParam(':email', $email);
         $statement->bindParam(':confirmToken', $confirmToken);
         $statement->execute();
-
-        /*return array(
-            'username' => $username,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'email' => $email
-        );*/
     }
 } 

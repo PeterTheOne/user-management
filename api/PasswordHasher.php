@@ -38,7 +38,7 @@ class PasswordHasher {
     /**
      * @return string
      */
-    public function createSalt() {
+    public static function createSalt() {
         return base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM));
     }
 
@@ -47,8 +47,8 @@ class PasswordHasher {
      * @param $salt
      * @return stdClass
      */
-    public function createHash($password, $salt) {
-        return base64_encode($this->pbkdf2(
+    public static function createHash($password, $salt) {
+        return base64_encode(self::pbkdf2(
             PBKDF2_HASH_ALGORITHM,
             $password,
             $salt,
@@ -64,10 +64,10 @@ class PasswordHasher {
      * @param $salt
      * @return bool
      */
-    public function validatePassword($hashedPassword, $password, $salt) {
-        return $this->slow_equals(
+    public static function validatePassword($hashedPassword, $password, $salt) {
+        return self::slow_equals(
             base64_decode($hashedPassword),
-            $this->pbkdf2(
+            self::pbkdf2(
                 PBKDF2_HASH_ALGORITHM,
                 $password,
                 $salt,
@@ -85,7 +85,7 @@ class PasswordHasher {
      * @param $b
      * @return bool
      */
-    public function slow_equals($a, $b) {
+    public static function slow_equals($a, $b) {
         $diff = strlen($a) ^ strlen($b);
         for($i = 0; $i < strlen($a) && $i < strlen($b); $i++)
         {
