@@ -52,6 +52,7 @@ define([
 
                 // todo: username exclude names that are used for navigation
                 // todo: regex type mail
+                // todo: check/sanitize characters in username, firstname and lastname
 
                 if (password1.length === 0) {
                     errors.push('password1 is not set.');

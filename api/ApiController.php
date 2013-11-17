@@ -93,15 +93,17 @@ class ApiController {
 
         // todo: username exclude names that are used for navigation
         // todo: regex type mail
+        // todo: check/sanitize characters in username, firstname and lastname
 
         return true;
     }
 
     /**
-     * @param string $username
-     * @param string $password
-     * @param boolean $remember
+     * @param $username
+     * @param $password
+     * @param $remember
      *
+     * @return array
      * @throws Exception
      */
     public function loginUser($username, $password, $remember) {
@@ -145,5 +147,14 @@ class ApiController {
             'remember' => $remember,
             'sessionToken' => $sessionToken
         );
+    }
+
+    /**
+     * @param $sessionToken
+     * @return bool
+     */
+    public function checkLogin($sessionToken) {
+        // todo: implement
+        return true;
     }
 }

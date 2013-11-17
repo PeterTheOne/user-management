@@ -5,13 +5,15 @@ define([
     'model/user',
     'model/session',
     'view/register',
-    'view/login'
-], function($, _, Backbone, User, Session, RegisterView, LoginView) {
+    'view/login',
+    'model/random'
+], function($, _, Backbone, User, session, RegisterView, LoginView, Random) {
     var AppRouter = Backbone.Router.extend({
         routes: {
             '': 'index',
             'register(/)': 'register',
-            'login(/)': 'login'
+            'login(/)': 'login',
+            'randomRequest(/)': 'randomRequest'
         },
 
         index: function() {
@@ -33,10 +35,18 @@ define([
             var $el = $('.content');
             $el.html('<h1>user-management</h1>');
 
-            var session = new Session();
             var loginView = new LoginView({model: session});
             loginView.render();
             $el.append(loginView.$el);
+        },
+
+        randomRequest: function() {
+            var $el = $('.content');
+            $el.html('<h1>user-management</h1>');
+            $el.html('<h2>user-management</h2>');
+
+            var random = new Random();
+            random.fetch();
         }
     });
 

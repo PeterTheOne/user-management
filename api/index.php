@@ -89,4 +89,29 @@ $app->post('/session(/)', function() use($app, $config, $pdo) {
     }
 });
 
+$app->get('/randomRequest(/)', function() use($app, $config, $pdo) {
+    try {
+        $headers = $app->request()->headers;
+        $sessionToken = $app->request()->headers->get('X-Session-Token');
+
+        $apiController = new ApiController($config, $pdo);
+        $apiController->checkLogin($sessionToken);
+
+        $result = array('done' => $sessionToken);
+
+        $app->response()->body(json_encode($result, JSON_PRETTY_PRINT));
+    } catch (Exception $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        $result = array(
+            'exception' => $exception->getMessage()
+        );
+        $app->response()->body(json_encode($result, JSON_PRETTY_PRINT));
+
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $exception->getMessage());
+    }
+});
+
 $app->run();
