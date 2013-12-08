@@ -48,4 +48,46 @@ class SessionRepository extends AbstractRepository {
         $statement->bindParam(':remember', $remember, PDO::PARAM_BOOL);
         $statement->execute();
     }
+
+    /**
+     *
+     */
+    public function removeExpiredSessions() {
+        $statement = $this->pdo->prepare('
+            DELETE FROM ' . $this->tableName . '
+            WHERE expire < NOW();
+        ');
+        $statement->execute();
+    }
+
+    /**
+     * @param $sessionToken
+     * @return mixed
+     */
+    public function getNotExpiredSession($sessionToken) {
+        $statement = $this->pdo->prepare('
+            SELECT created, expire, userId, sessionToken, remember
+            FROM ' . $this->tableName . '
+            WHERE sessionToken = :sessionToken AND expire >= NOW()
+            LIMIT 1;
+        ');
+        $statement->bindParam(':sessionToken', $sessionToken);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * @param $sessionToken
+     * @param $secondsToExpire
+     */
+    public function updateSessionExpire($sessionToken, $secondsToExpire) {
+        $statement = $this->pdo->prepare('
+            UPDATE ' . $this->tableName . '
+            SET expire = NOW() + INTERVAL :secondsToExpire SECOND
+            WHERE sessionToken = :sessionToken;
+        ');
+        $statement->bindParam(':sessionToken', $sessionToken);
+        $statement->bindParam(':secondsToExpire', $secondsToExpire);
+        $statement->execute();
+    }
 } 

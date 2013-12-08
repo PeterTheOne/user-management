@@ -91,11 +91,10 @@ $app->post('/session(/)', function() use($app, $config, $pdo) {
 
 $app->get('/randomRequest(/)', function() use($app, $config, $pdo) {
     try {
-        $headers = $app->request()->headers;
         $sessionToken = $app->request()->headers->get('X-Session-Token');
 
         $apiController = new ApiController($config, $pdo);
-        $apiController->checkLogin($sessionToken);
+        $userId = $apiController->checkSession($sessionToken);
 
         $result = array('done' => $sessionToken);
 

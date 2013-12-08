@@ -25,10 +25,10 @@ define([
             this.on('change sync', function() {
                 var key;
                 for(key in self.attributes) {
-                    if (this.localStorageSupport) {
+                    if (this.sessionStorageSupport) {
                         sessionStorage.setItem(key, self.attributes[key]);
                     }
-                    if (this.sessionStorageSupport) {
+                    if (this.localStorageSupport) {
                         if (self.get('remember')) {
                             localStorage.setItem(key, self.attributes[key]);
                         } else {

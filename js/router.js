@@ -58,7 +58,7 @@ define([
             appRouter.navigate(location, true);
         };
 
-        Backbone.history.start({});
+        Backbone.history.start({pushState: false});
     };
 
     return {

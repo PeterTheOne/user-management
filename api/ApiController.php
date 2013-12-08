@@ -119,7 +119,7 @@ class ApiController {
 
         if (!$passwordHasher->validatePassword($user->passwordHash, $password, $salt)) {
             // todo: log invalid login attempt
-            // todo: create new Exceptions for 403
+            // todo: create 401 Exception
             throw new Exception('not authorised.');
         }
 
@@ -151,10 +151,27 @@ class ApiController {
 
     /**
      * @param $sessionToken
-     * @return bool
+     *
+     * @return mixed
+     * @throws Exception
      */
-    public function checkLogin($sessionToken) {
-        // todo: implement
-        return true;
+    public function checkSession($sessionToken) {
+        $sessionRepository = new SessionRepository($this->pdo);
+
+        // todo: do this with a cronjob
+        $sessionRepository->removeExpiredSessions();
+
+        $session = $sessionRepository->getNotExpiredSession($sessionToken);
+        if (!$session) {
+            // todo: create 401 Exception
+            throw new Exception('You are not authorized.');
+        }
+
+        if (!$session->remember) {
+            $secondsToExpire = $this->config->shortSessionDuration;
+            $sessionRepository->updateSessionExpire($sessionToken, $secondsToExpire);
+        }
+
+        return $session->userId;
     }
 }
